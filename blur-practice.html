@@ -1,0 +1,55 @@
+<style>
+    body {
+        background: rgb(206, 42, 42);
+        background-image: radial-gradient(rgb(250, 234, 212) 25%, transparent 0);
+        background-size: 30px 30px;
+        padding-top: calc(50vh - 5.3em);
+        /*垂直居中 视口可分为100个vh*/
+
+    }
+
+    .main {
+        position: relative;
+        margin: 0 auto;
+        padding: 1em;
+        max-width: 23em;
+        background: hsla(0, 0%, 100%, .1) border-box;
+        overflow: hidden;
+        border-radius: .3em;
+        box-shadow: 0 0 0 1px hsla(0, 0%, 100%, .3) inset,
+            0 .5em 1em rgba(0, 0, 0, 0.6);
+        text-shadow: 0 1px 1px hsla(0, 0%, 100%, .3);
+    }
+
+    .main::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: -30px;
+        z-index: -1;
+        /*层叠级别置于父容器main之下*/
+        -webkit-filter: blur(10px);
+        filter: blur(5px);
+        /*模糊效果*/
+        background: rgb(206, 42, 42);
+        background-image: radial-gradient(rgb(250, 234, 212) 25%, transparent 0);
+        background-size: 30px 30px;
+    }
+
+    blockquote {
+        font-style: italic
+    }
+
+    blockquote cite {
+        font-style: normal;
+    }
+</style>
+
+<main class="main">
+    <blockquote>“我们遇到什么困难也不要怕，微笑着面对它！消除恐惧的最好办法就是面对恐惧！坚持，才是胜利。加油！奥利给！”</em>
+        <footer>— <cite>Giant Monster</cite></footer>
+    </blockquote>
+</main>
