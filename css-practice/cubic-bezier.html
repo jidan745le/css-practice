@@ -1,0 +1,165 @@
+<style>
+    body {
+        margin: 0px;
+    }
+
+    .curve-info {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    #P1{
+        cursor: pointer;
+        background-color:hotpink;
+    }
+
+    #P2 {
+        cursor: pointer;
+        background-color: blueviolet;
+
+    }
+
+    #P3 {
+        cursor:auto;
+        background-color:darkred;
+        /* 居中 */
+        transform: translateX(-50%);
+        animation:1s bzMove infinite alternate  3s;
+        
+    }
+
+    @keyframes bzMove {
+        to {transform:translateY(300px)};
+    }
+
+    .control-point {
+        position: absolute;
+        z-index: 1;
+        height: 20px;
+        width: 20px;
+        border: 1px solid rgba(0, 0, 0, .3);
+        margin: -10px 0 0 -10px;
+        outline: none;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    .display-curve {
+        position:absolute;
+        top:0;
+        left:300px;
+        right:0;
+        bottom:0;        
+    }
+</style>
+
+
+<canvas height="600" width="300" id="curve"></canvas>
+
+<button class="control-point" id="P1" style="left:0px; top: 450px;"></button>
+<button class="control-point" id="P2" style="left:300px; top: 150px;"></button>
+<div class="display-curve">
+    <button class="control-point" id="P3" style="left:50%; top: 150px;animation-timing-function:cubic-bezier(0,0,0,0) "></button>
+</div>
+
+
+
+<script>
+    const startPoint = [0,450];
+    const endPoint = [300,150];
+    let ctx = returnCanvasCtx();
+
+    function returnCanvasCtx() {
+        canvas = document.getElementById('curve');
+        if (canvas.getContext) {
+            var ctx = canvas.getContext('2d');
+            return ctx;
+        }
+    }
+
+    //画贝塞尔曲线
+    function drawCurve(ctx, px1, py1, px2, py2) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        //原点
+        ctx.moveTo(...startPoint);
+        ctx.lineTo(px1,py1);
+        ctx.moveTo(...endPoint);
+        ctx.lineTo(px2,py2);
+        ctx.moveTo(...startPoint);
+        ctx.bezierCurveTo(px1, py1, px2, py2,...endPoint);
+        ctx.stroke();
+        //  ctx.bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+    }
+
+    function convert(coor){
+        return [coor[0]/300,-coor[1]/300+1.5];
+    }
+
+    drawCurve(ctx, 0, 450, 300, 150);
+    let px1 = 0,py1 = 450, px2 = 300, py2 = 150;
+    let $curve = document.querySelector("#curve");
+    let $curveInfoSpan = document.querySelector(".curve-info");
+    let $p1 = document.querySelector("#P1");
+    let $p2 = document.querySelector("#P2");
+    let $p3 = document.querySelector("#P3");
+    console.log($curve.getBoundingClientRect());
+    let cvsLeft = $curve.getBoundingClientRect().left;
+    let cvsTop = $curve.getBoundingClientRect().top;
+
+    function mousemoveHandle1(event) {
+        //拖动小球1
+        if(event.clientX > 300){
+            return;
+        }
+        $p1.style.left = event.clientX + "px";
+        $p1.style.top = event.clientY + "px";
+        px1 = event.clientX;
+        py1 = event.clientY;
+        drawCurve(ctx,px1,py1, px2, py2);
+        $p3.style.animationTimingFunction = `cubic-bezier(${convert([px1,py1]).join()},${convert([px2,py2]).join()})`;
+
+        // console.log(event);
+    }
+
+    function mousemoveHandle2(event) {
+        //拖动小球2
+        if(event.clientX > 300){
+            return;
+        }
+        $p2.style.left = event.clientX + "px";
+        $p2.style.top = event.clientY + "px";
+        px2 = event.clientX;
+        py2 = event.clientY;
+        drawCurve(ctx,px1,py1, px2, py2);
+        $p3.style.animationTimingFunction = `cubic-bezier(${convert([px1,py1]).join()},${convert([px2,py2]).join()})`;
+        console.log($p3.style.animationTimingFunction);
+    }
+
+    //实现对p1点的拖动
+    $p1.addEventListener("mousedown", function mousedownHandle(event) {
+        console.log(this);
+        document.addEventListener("mousemove", mousemoveHandle1)
+
+        $p1.addEventListener("mouseup", function (event) {
+            
+            document.removeEventListener("mousemove", mousemoveHandle1);
+        })
+
+
+
+    })
+
+    //实现对p2点的拖动
+    $p2.addEventListener("mousedown", function mousedownHandle(event) {
+        document.addEventListener("mousemove", mousemoveHandle2)
+
+        $p2.addEventListener("mouseup", function (event) {
+            
+            document.removeEventListener("mousemove", mousemoveHandle2);
+        })
+    })
+</script>
